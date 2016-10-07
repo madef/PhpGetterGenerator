@@ -51,6 +51,22 @@ foreach ($matches[1] as $class) {
 		
 		$propertyCamelized = ucfirst($property->name);
 		
+		if (!$ref->hasMethod('set' . $property->name)) {
+			$codeToAdd[$ecl] .= "
+    /**
+     * Set {$property->name}
+     *
+     * @param $type \${$property->name}
+     * @return $class
+     */
+    public function set{$propertyCamelized}(\${$property->name})
+    {
+        \$this->{$property->name} = \${$property->name};
+    
+        return \$this;
+    }
+";
+		}
 		if (!$ref->hasMethod('get' . $property->name)) {
 			$codeToAdd[$ecl] .= "
     /**
@@ -61,22 +77,6 @@ foreach ($matches[1] as $class) {
     public function get{$propertyCamelized}()
     {
         return \$this->{$property->name};
-    }
-";
-		}
-		if (!$ref->hasMethod('set' . $property->name)) {
-			$codeToAdd[$ecl] .= "
-    /**
-     * Set {$property->name}
-     *
-     * @param $type {$property->name}
-     * @return $class
-     */
-    public function set{$propertyCamelized}(\${$property->name})
-    {
-        \$this->{$property->name} = \${$property->name};
-    
-        return \$this;
     }
 ";
 		}
